@@ -66,7 +66,7 @@ window.addEventListener("keydown",(event)=>{
     isPressed = true;
     if(event.key==="ArrowRight"){
         moveCarousel(window.innerWidth/2 + 1);
-    }else{
+    }else if(event.key==="ArrowLeft"){
         moveCarousel(window.innerWidth/2 - 1);
     }
 });
