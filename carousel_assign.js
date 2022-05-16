@@ -42,16 +42,51 @@ items.forEach((i, idx) =>{
 
 let angle = 360 / arrPic.length;
 let curAngle = 0;
-center.addEventListener("click",(event)=>{
-    console.log(curAngle);
-    console.log(center);
-    if(event.clientX < window.innerWidth / 2){
-        curAngle += angle;
-    }else{
-        curAngle -= angle;
-    }
-    center.setAttribute('style',`transform:translate(-50%,-50%) rotateY(${curAngle}deg)`);
+let isPressed = false;
+
+// center.addEventListener("click",(event)=>{
+//     if(event.clientX < window.innerWidth / 2){
+//         curAngle += angle;
+//     }else{
+//         curAngle -= angle;
+//     }
+//     center.setAttribute('style',`transform:translate(-50%,-50%) rotateY(${curAngle}deg)`);
+// });
+
+center.addEventListener("mousedown",(event)=>{
+    isPressed = true;
+    moveCarousel(event.clientX);
 });
+
+center.addEventListener("mouseup",(event)=>{
+    isPressed = false;
+});
+
+window.addEventListener("keydown",(event)=>{
+    isPressed = true;
+    if(event.key==="ArrowRight"){
+        moveCarousel(window.innerWidth/2 + 1);
+    }else{
+        moveCarousel(window.innerWidth/2 - 1);
+    }
+});
+window.addEventListener("keyup",(event)=>{
+    isPressed = false;
+});
+
+function moveCarousel(clickDir){
+    if(isPressed){
+        if(clickDir<window.innerWidth/2){
+            curAngle += angle;
+        }else{
+            curAngle -= angle;
+        }
+        center.setAttribute('style',`transform:translate(-50%,-50%) rotateY(${curAngle}deg)`);
+        setTimeout(()=>{
+            moveCarousel(clickDir);
+        },200);
+    }
+}
 
 
 function renderCarousel(){
