@@ -10,34 +10,39 @@ uploadBtn.addEventListener("click",()=>{
     }
     const imgSrc = URL.createObjectURL(inputImg.files[0]);
     containArr.push(imgSrc);
-    // renderCarousel();
+    initValues();//값 초기화
+    // renderCarousel()
 });
 
 let containArr = [
+    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/nyaong.png",
+    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/pulin.png",
+    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/weirdseed.png",
     "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/jammanbo.png",
     "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/ev.png?raw=true",
     "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/mazayoung.png?raw=true",
     "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/mobugi.png",
-    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/nyaong.png",
-    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/pulin.png",
-    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/weirdseed.png",
+    // "./img/0.png","./img/1.png","./img/2.png","./img/3.png","./img/4.png","./img/5.png",
+    // "./img/6.png","./img/7.png","./img/8.png","./img/9.png",
 ]
 
 
 
 let arrPic = [
+    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/nyaong.png",
+    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/pulin.png",
+    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/weirdseed.png",
     "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/jammanbo.png",
     "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/ev.png?raw=true",
     "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/mazayoung.png?raw=true",
     "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/mobugi.png",
-    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/nyaong.png",
-    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/pulin.png",
-    "https://raw.githubusercontent.com/nugurejeil/sharingPhoto/main/weirdseed.png",
+    // "./img/0.png","./img/1.png","./img/2.png","./img/3.png","./img/4.png","./img/5.png",
+    // "./img/6.png",
 ];
 
 const perspective = 230;
 
-document.querySelector("#app").setAttribute('style',`perspective:${perspective * arrPic.length}px`);
+document.querySelector("#app").setAttribute('style',`perspective:${perspective * arrPic.length}px`);//원근법 계산 코드
 
 arrPic.forEach(i => {
     const elLi = document.createElement('li');
@@ -49,6 +54,7 @@ let items = center.querySelectorAll("li");
 let itemsDegree = 360 / items.length;
 let itemsRadius = items[0].offsetWidth * items.length / 2 / Math.PI;
 items.forEach((i, idx) =>{
+    idx = (idx+4)%items.length;
     if(idx===0){
         i.setAttribute('style',`transform:rotateY(0deg) translateZ(${itemsRadius}px)`);
     }else{
@@ -61,13 +67,14 @@ let curAngle = 0;
 let isPressed = false;
 
 
-let curLastRight = 3;
-let curLastLeft = 4;
-let curAddIdx = arrPic.length;
-
+let curLastRight = 0;
+let curLastLeft = arrPic.length-1;
+let curFirstIdx = 0;
 function changeArrPic(dir){
-    if(curAddIdx===containArr.length){
-        curAddIdx = 0;
+    if(curFirstIdx===containArr.length){
+        curFirstIdx = 0;
+    }else if(curFirstIdx===-1){
+        curFirstIdx = containArr.length-1;
     }
     if(curLastRight===arrPic.length){
         curLastRight=0;
@@ -79,14 +86,19 @@ function changeArrPic(dir){
     }else if(curLastLeft===arrPic.length){
         curLastLeft = 0;
     }
-
-    console.log("오른쪽: "+curLastRight+"왼쪽: "+curLastLeft+"추가: "+curAddIdx)
     if(dir==="right"){
-        items[curLastRight].firstChild.setAttribute('src',containArr[curAddIdx++]);
+        curFirstIdx++;
+        let tempIdx = (curFirstIdx + 6)%containArr.length;
+        items[curLastRight].firstChild.setAttribute('src',containArr[tempIdx]);
         curLastRight++;
         curLastLeft++;
     }else if(dir==="left"){
-        items[curLastLeft].firstChild.setAttribute('src',containArr[curAddIdx++]);
+        curFirstIdx--;
+        if(curFirstIdx<0){
+            curFirstIdx=containArr.length - 1;
+        }
+        let tempIdx = curFirstIdx;
+        items[curLastLeft].firstChild.setAttribute('src',containArr[tempIdx]);
         curLastRight--;
         curLastLeft--;
     }
@@ -144,10 +156,32 @@ function moveCarousel(clickDir){
         center.setAttribute('style',`transform:translate(-50%,-50%) rotateY(${curAngle}deg)`);
         setTimeout(()=>{
             moveCarousel(clickDir);
-        },500);
+        },200);
     }
 }
 
+
+
+
+function initValues(){
+    curLastRight = 0;
+    curLastLeft = arrPic.length-1;
+    curFirstIdx = 0;
+
+    curFirstIdx = 0;
+    let cnt = 0;
+    items.forEach((i, idx) =>{
+        idx = (idx+4)%items.length;
+        if(idx===0){
+            i.setAttribute('style',`transform:rotateY(0deg) translateZ(${itemsRadius}px)`);
+        }else{
+            i.setAttribute('style',`transform:rotateY(${itemsDegree * (idx)}deg) translateZ(${itemsRadius}px)`);
+        }
+        i.firstChild.setAttribute('src',containArr[cnt++]);
+    });
+    curAngle = 0;
+    center.setAttribute('style',`transform:translate(-50%,-50%) rotateY(0deg)`);
+}
 
 
 
@@ -171,8 +205,8 @@ function moveCarousel(clickDir){
 //     document.querySelector("#app").setAttribute('style',`perspective:${perspective * arrPic.length}px`);
 //     //요소 추가된 만큼 원근법 좀더 멀게
 
-//     curAngle = 0;
-//     angle = 360 / arrPic.length;
-//     center.setAttribute('style',`transform:translate(-50%,-50%) rotateY(0deg)`);
+    // curAngle = 0;
+    // angle = 360 / arrPic.length;
+    // center.setAttribute('style',`transform:translate(-50%,-50%) rotateY(0deg)`);
 //     //이동 각도 초기화 및 조정
 // }
