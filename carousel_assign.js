@@ -86,6 +86,7 @@ function changeArrPic(dir){
     }else if(curLastLeft===arrPic.length){
         curLastLeft = 0;
     }
+    
     if(dir==="right"){
         curFirstIdx++;
         let tempIdx = (curFirstIdx + 6)%containArr.length;
